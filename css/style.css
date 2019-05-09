@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100%;
+}
+
+.row {
+    background: #C1E0FF;
+    height: 100%;
+    margin-top: 4%;
+}
+
+.title {
+    display: block;
+    margin-top: 8%;
+    text-align: center;
+}
+
+.column {
+    padding: 10px;
+    box-shadow: -5px 0 55px -5px #333, -5px 0 55px -5px #333;
+    /*    box-shadow: 12px 0px 12px -4px #333, -12px 0 8px -4px #333;*/
+}
+
+/* Middle column where main content is */
+
+.column.middle {
+    width: 60%;
+    margin: auto;
+    background: white;
+}
+
+/* The Modal (background) */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    /* Sit on top */
+    padding-top: 18%;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+}
+
+/* Modal Content */
+
+.modal-content {
+    background-color: white;
+    margin: auto;
+    padding-top: 10px;
+    border: 10px solid white;
+    width: 40%;
+    height: 40%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.test_status {
+    padding-top: 20px;
+    padding-left: 60px;
+    padding-right: 60px;
+}
+
+.test {
+    padding-left: 60px;
+    padding-right: 60px;
+}
+
+.player {
+    display: block;
+    margin: 80px auto;
+}
+
+.button {
+    background-color: #C1E0FF; /* Green */
+    border: none;
+    color: black;
+    padding: 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+

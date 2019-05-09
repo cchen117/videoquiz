@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- important meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Title -->
+    <title>Berklee Code Test</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <div class="row">
+
+        <div class="column middle">
+
+            <!-- Webpage Title -->
+            <h1 class="title">VIDEO QUIZ</h1>
+
+            <!-- The <iframe> (and video player) will replace this <div> tag -->
+            <div id="player" class="player"></div>
+
+            <!-- The quiz -->
+            <div id="modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h3 id="test_status" class="test_status"></h3>
+                        <div id="test" class="test"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        ///////////////////////////////// Part 1: Setting up the environment////////////////////////////////////////////
+
+        // Parse the input string and calculate how many questions there are
+        var string = '{"1":{"question":"What is a Samoyed nickname?","choices":{"A":"Sammy","B":"Smiley Dog","C":"Sams","D":"all of the above"},"answer":"D","pauseAt":"23"},"2":{"question":"Where are Samoyeds from originally?","choices":{"A":"China","B":"Siberia","C":"South America","D":"Africa"},"answer":"B","pauseAt":"70"},"3":{"question":"How to spot a Samoyed?","choices":{"A":"all of it","B":"with its black lips curved upward","C":"with its upward-curving tail","D":"with its double coat"},"answer":"A","pauseAt":"109"},"4":{"question":"What else should I know about Samoyeds?","choices":{"A":"They are not good with children","B":"They require a lot of grooming","C":"They do not need exercise at all","D":"They are perfect for warm weather"},"answer":"B","pauseAt":"197"},"video":{"title":"Samoyeds 101","url":"https://www.youtube.com/embed/YF8wvUqZfHs?rel=0"}}'
+        var info = JSON.parse(string);
+        var len = Object.keys(info).length - 1;
+
+        // This code loads the IFrame Player API code asynchronously.
+        var tag = document.createElement('script');
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        tag.src = "https://www.youtube.com/iframe_api";
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+
+        var player;
+        // This function creates an <iframe> (and YouTube player) after the API code downloads.
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '390',
+                width: '640',
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+
+        ///////////////////////////////// Part 2: Playing the video and popping the quiz////////////////////////////////////////////
+
+        // Initializing variables
+        var test = document.getElementById("test");
+        var test_stat = document.getElementById("test_status");
+        var modal = document.getElementById("modal");
+
+        var i = 1; // This is a pointer to keep track of which question/part of the video the user is working on
+        var loading = false;
+        var score = 0;
+
+        // This function plays the video upon command (user clicking the play button)
+        function onPlayerReady(event) {
+            event.target.cueVideoByUrl({
+                mediaContentUrl: info.video.url,
+                startSeconds: 0,
+                endSeconds: info[i].pauseAt
+            });
+        }
+
+        // This function fires whenever the state of the video changes
+        function onPlayerStateChange(event) {
+
+            // Pops the question whenever video stops in between 
+            if (event.data == YT.PlayerState.ENDED && i != len + 1 && !loading) {
+                pop();
+                test.innerHTML += "<button class=\"button\" onclick='checkAnswer(false)'><i class=\"fa fa-list-ul\" aria-hidden=\"true\"></i> Check Answer</button>";
+            }
+            // Show quiz result if video ends
+            if (event.data == YT.PlayerState.ENDED && i == len + 1 && !loading) {
+                i = 1;
+                showScore();
+            }
+        }
+
+        // This funciton creates a pop-up window and shows the question
+        function pop() {
+            modal.style.display = "block";
+            test_stat.innerHTML = "Question " + i + " of " + len;
+            test.innerHTML = "<h2>" + info[i].question + "</h2>";
+            test.innerHTML += "<input type='radio' name='choices' value='A'> " + info[i].choices.A + "<br>";
+            test.innerHTML += "<input type='radio' name='choices' value='B'> " + info[i].choices.B + "<br>";
+            test.innerHTML += "<input type='radio' name='choices' value='C'> " + info[i].choices.C + "<br>";
+            test.innerHTML += "<input type='radio' name='choices' value='D'> " + info[i].choices.D + "<br><br>";
+        }
+
+        // This function calculates the quiz score and gives user the option to take it again
+        function showScore() {
+            var percentage = (score / 5) * 100;
+            modal.style.display = "block";
+            test_stat.innerHTML = "<h1>Good job!</h1>";
+            test_stat.innerHTML += "<h2>Here's your score: " + score + " / 5 (" + percentage + "%)</h2>";
+            test.innerHTML = "<button class=\"button\" onclick='endPop()'><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> Retake Quiz</button>";
+            test.innerHTML += "<button class=\"button\" onclick='done()'><i class=\"fa fa-check\" aria-hidden=\"true\"></i> I'm Done!</button>";
+        }
+
+        // This function shows the quiz at the end of the video when user wants to retake it
+        function endPop() {
+            if (i == 1) {
+                score = 0;
+            }
+            pop();
+            if (i != len) {
+                test.innerHTML += "<button class=\"button\" onclick='next()'>Next <i class=\"fa fa-chevron-right\" aria-hidden=\"true\"></i></button>";
+            } else {
+                // At the end of the retaken quiz, show score and all answers
+                test.innerHTML += "<button class=\"button\" onclick='next()'><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> See Score</button>";
+            }
+        }
+
+        // This function shows the next question when user retakes the quiz at the end of the video
+        function next() {
+            checkAnswer(true);
+            if (i != len) {
+                i++;
+                endPop();
+            } else {
+                i = 1;
+                // See the score for the retaken quiz
+                showScore();
+            }
+        }
+
+        // This function closes the pop-up window
+        function done() {
+            modal.style.display = "none";
+        }
+
+        // This function checks the answer chosen by the user
+        function checkAnswer(retaking) {
+
+            // Retrieves user's answer
+            choices = document.getElementsByName("choices");
+            for (var idx = 0; idx < choices.length; idx++) {
+                if (choices[idx].checked) {
+                    choice = choices[idx].value;
+                }
+            }
+            // If user is correct, the next part of the video is played
+            if (choice == info[i].answer) {
+                score++;
+                if (!retaking) {
+                    test_stat.innerHTML = "<h1><i class=\"fa fa-thumbs-o-up\" aria-hidden=\"true\"></i> Nice!</h1>";
+                    test.innerHTML = "<button class=\"button\" onclick='playAt(false)'>Move On <i class=\"fa fa-play\" aria-hidden=\"true\"></i></button>";
+                }
+            // If user is wrong, user chooses to replay or move on 
+            } else if (!retaking) {
+                test_stat.innerHTML = "<h1>Oops, that was wrong.</h1>";
+                test.innerHTML = "<button class=\"button\" onclick='playAt(true)'><i class=\"fa fa-backward\" aria-hidden=\"true\"></i> Replay Video</button>";
+                test.innerHTML += "<button class=\"button\" onclick='showAnswer()'><i class=\"fa fa-eye\" aria-hidden=\"true\"></i> Show Answer</button>";
+            }
+        }
+
+        // This function shows the correct answer and allows user to move on
+        function showAnswer() {
+            ans = info[i].answer;
+            test_stat.innerHTML = "<h2>The answer was<h2>";
+            test_stat.innerHTML += "<h1>" + ans + " (" + info[i].choices[ans] + ")</h1>";
+            test.innerHTML = "<button class=\"button\" onclick='playAt(false)'>Move On <i class=\"fa fa-play\" aria-hidden=\"true\"></i></button>";
+        }
+
+        // This function automatically plays the video with specified start and end time
+        function playVid(start, end) {
+            if (end == 0) {
+                player.loadVideoByUrl({
+                    mediaContentUrl: info.video.url,
+                    startSeconds: start
+                });
+            } else {
+                player.loadVideoByUrl({
+                    mediaContentUrl: info.video.url,
+                    startSeconds: start,
+                    endSeconds: end
+                });
+            }
+        }
+
+        // This function plays the video at specified time, with the parameter (replay)
+        // indicating whether the video should be replayed or keep playing
+        function playAt(replay) {
+            
+            // The video starts loading when the pop-up window closes, and the code above would
+            // mistake this transition period for another pop-up moment. To avoid this, I set a 
+            // boolean variable so the pop-up wouldn't show up when the video loads.
+            modal.style.display = "none";
+            loading = true;
+            setTimeout(skipPop, 3000);
+
+            if (replay) {
+                console.log("replaying");
+                if (i == 1) {
+                    playVid(0, info[i].pauseAt);
+                } else {
+                    playVid(info[i - 1].pauseAt, info[i].pauseAt);
+                }
+            // Next part of the video plays
+            } else {
+                if (i == len) {
+                    playVid(info[i].pauseAt, 0);
+                } else {
+                    playVid(info[i].pauseAt, info[i + 1].pauseAt);
+                }
+                i++;
+            }
+        }
+        
+        // This function is triggered 3 seconds after the pop-up window closes, just to avoid another pop-up when the video loads
+        function skipPop() {
+            loading = false;
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+{
+    "video": {
+        "title": "Samoyeds 101",
+        "url": "https://www.youtube.com/embed/YF8wvUqZfHs?rel=0"
+    },
+    
+    "1": {
+        "question": "What is a Samoyed nickname?",
+        "choices": {
+            "A": "Sammy",
+            "B": "Smiley Dog",
+            "C": "Sams",
+            "D": "all of the above"
+        },
+        "answer": "D",
+        "pauseAt": "23"
+    },
+
+    "2": {
+        "question": "Where are Samoyeds from originally?",
+        "choices": {
+            "A": "China",
+            "B": "Siberia",
+            "C": "South America",
+            "D": "Africa"
+        },
+        "answer": "B",
+        "pauseAt": "70"
+    },
+
+    "3": {
+        "question": "How to spot a Samoyed?",
+        "choices": {
+            "A": "all of it",
+            "B": "with its black lips curved upward",
+            "C": "with its upward-curving tail",
+            "D": "with its double coat"
+        },
+        "answer": "A",
+        "pauseAt": "109"
+    },
+
+    "4": {
+        "question": "What else should I know about Samoyeds?",
+        "choices": {
+            "A": "They are not good with children",
+            "B": "They require a lot of grooming",
+            "C": "They do not need exercise at all",
+            "D": "They are perfect for warm weather"
+        },
+        "answer": "B",
+        "pauseAt": "197"
+    }
+}
