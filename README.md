@@ -6,3 +6,5 @@ User hits play on the video, it plays up to a certain point, pauses, and asks us
 
 I worked with Youtube API for this project, and used vanilla CSS, FontAwesome, and Javascript, which is written in the HTML file. 
 The app accepts a hard-coded JSON string that contains information about the quiz, including questions, choices, answers and the video URL.
+
+![](videoquiz.gif)
